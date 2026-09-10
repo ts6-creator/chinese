@@ -1,0 +1,2197 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Chinese Flashcards</title>
+
+
+<style>
+
+/* =========================
+   ОСНОВА
+========================= */
+
+body {
+
+    font-family: Arial, sans-serif;
+
+    max-width: 850px;
+
+    margin: 20px auto;
+
+    padding: 20px;
+
+    text-align: center;
+
+    background: #f5f5f5;
+
+    color: #222;
+
+}
+
+
+/* =========================
+   ВЕРХНЯЯ ПАНЕЛЬ
+========================= */
+
+.top-bar {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 10px;
+
+}
+
+
+.restart-top {
+
+    background: #777;
+
+    color: white;
+
+    font-size: 15px;
+
+    padding: 9px 14px;
+
+}
+
+
+.score {
+
+    font-size: 20px;
+
+    margin: 15px;
+
+}
+
+
+.progress {
+
+    font-size: 16px;
+
+    color: #666;
+
+    margin-bottom: 15px;
+
+}
+
+
+/* =========================
+   ПРОГРЕСС
+========================= */
+
+.progress-container {
+
+    width: 100%;
+
+    height: 10px;
+
+    background: #ddd;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    margin-bottom: 20px;
+
+}
+
+
+.progress-bar {
+
+    height: 100%;
+
+    width: 0%;
+
+    background: #2196F3;
+
+    transition: width 0.3s;
+
+}
+
+
+/* =========================
+   РЕЖИМЫ
+========================= */
+
+.mode-buttons {
+
+    margin: 20px 0;
+
+}
+
+
+.mode-button {
+
+    background: #ddd;
+
+    color: #333;
+
+}
+
+
+.mode-button.active {
+
+    background: #333;
+
+    color: white;
+
+}
+
+
+/* =========================
+   КАРТОЧКА
+========================= */
+
+.card {
+
+    background: white;
+
+    border: 2px solid #333;
+
+    border-radius: 12px;
+
+    padding: 55px 20px;
+
+    min-height: 120px;
+
+    font-size: 38px;
+
+    font-weight: bold;
+
+    margin: 20px 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+/* =========================
+   ОТВЕТ
+========================= */
+
+.answer {
+
+    display: none;
+
+    background: white;
+
+    border: 2px solid #333;
+
+    border-radius: 12px;
+
+    padding: 25px;
+
+    margin: 20px 0;
+
+}
+
+
+.chinese {
+
+    font-size: 48px;
+
+    font-weight: bold;
+
+    margin-bottom: 10px;
+
+}
+
+
+.pinyin {
+
+    font-size: 28px;
+
+    margin: 15px 0;
+
+}
+
+
+.translation {
+
+    font-size: 21px;
+
+    margin: 10px;
+
+}
+
+
+/* =========================
+   ПИСЬМЕННЫЙ РЕЖИМ
+========================= */
+
+.writing-area {
+
+    display: none;
+
+    margin: 20px 0;
+
+}
+
+
+.writing-input {
+
+    width: 80%;
+
+    max-width: 500px;
+
+    padding: 15px;
+
+    font-size: 24px;
+
+    text-align: center;
+
+    border: 2px solid #333;
+
+    border-radius: 10px;
+
+    outline: none;
+
+}
+
+
+.writing-input:focus {
+
+    border-color: #2196F3;
+
+}
+
+
+.input-hint {
+
+    color: #777;
+
+    margin-top: 10px;
+
+}
+
+
+/* =========================
+   СРАВНЕНИЕ ПИСЬМЕННОГО
+========================= */
+
+.comparison {
+
+    display: none;
+
+    background: #fafafa;
+
+    border-radius: 10px;
+
+    padding: 18px;
+
+    margin-top: 20px;
+
+}
+
+
+.your-answer {
+
+    font-size: 23px;
+
+    margin: 10px;
+
+}
+
+
+.correct-answer {
+
+    font-size: 23px;
+
+    margin: 10px;
+
+}
+
+
+/* =========================
+   КНОПКИ
+========================= */
+
+button {
+
+    padding: 12px 22px;
+
+    font-size: 18px;
+
+    margin: 5px;
+
+    border-radius: 8px;
+
+    border: none;
+
+    cursor: pointer;
+
+}
+
+
+button:hover {
+
+    opacity: 0.88;
+
+}
+
+
+.know {
+
+    background: #4CAF50;
+
+    color: white;
+
+}
+
+
+.dontknow {
+
+    background: #f44336;
+
+    color: white;
+
+}
+
+
+.confirm {
+
+    background: #333;
+
+    color: white;
+
+    display: none;
+
+}
+
+
+.cancel {
+
+    background: #999;
+
+    color: white;
+
+    display: none;
+
+}
+
+
+.back {
+
+    background: #777;
+
+    color: white;
+
+}
+
+
+.sound {
+
+    background: #2196F3;
+
+    color: white;
+
+}
+
+
+.check {
+
+    background: #673AB7;
+
+    color: white;
+
+}
+
+
+.correct {
+
+    background: #4CAF50;
+
+    color: white;
+
+}
+
+
+.incorrect {
+
+    background: #f44336;
+
+    color: white;
+
+}
+
+
+/* =========================
+   РЕЗУЛЬТАТ
+========================= */
+
+#finishScreen {
+
+    display: none;
+
+    background: white;
+
+    border: 2px solid #333;
+
+    border-radius: 12px;
+
+    padding: 30px 20px;
+
+    margin-top: 20px;
+
+}
+
+
+.result {
+
+    font-size: 22px;
+
+    margin: 12px;
+
+}
+
+
+.percentage {
+
+    font-size: 30px;
+
+    font-weight: bold;
+
+    margin: 20px;
+
+}
+
+
+/* =========================
+   СПИСОК ОШИБОК
+========================= */
+
+.unknown-list {
+
+    text-align: left;
+
+    margin-top: 25px;
+
+}
+
+
+.unknown-item {
+
+    background: #f5f5f5;
+
+    border-radius: 10px;
+
+    padding: 15px;
+
+    margin: 10px 0;
+
+}
+
+
+.unknown-chinese {
+
+    font-size: 30px;
+
+    font-weight: bold;
+
+}
+
+
+.unknown-pinyin {
+
+    font-size: 20px;
+
+    margin-top: 5px;
+
+}
+
+
+.unknown-translation {
+
+    font-size: 18px;
+
+    margin-top: 5px;
+
+}
+
+
+/* =========================
+   КНОПКИ КОНЦА
+========================= */
+
+.finish-buttons {
+
+    margin-top: 25px;
+
+}
+
+
+.repeat {
+
+    background: #FF9800;
+
+    color: white;
+
+}
+
+
+.restart {
+
+    background: #2196F3;
+
+    color: white;
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     ВЕРХ
+========================= -->
+
+<div class="top-bar">
+
+    <h1>🇨🇳 Китайские карточки</h1>
+
+    <button
+        class="restart-top"
+        onclick="restartConfirm()">
+
+        🔄 Начать заново
+
+    </button>
+
+</div>
+
+
+<div class="score">
+
+    ✓ Знал:
+    <span id="good">0</span>
+
+    &nbsp; | &nbsp;
+
+    ✕ Не знал:
+    <span id="bad">0</span>
+
+</div>
+
+
+<div id="progress"
+     class="progress">
+
+</div>
+
+
+<div class="progress-container">
+
+    <div id="progressBar"
+         class="progress-bar">
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     РЕЖИМ
+========================= -->
+
+<div class="mode-buttons">
+
+    <button
+        id="normalModeButton"
+        class="mode-button active"
+        onclick="setMode('normal')">
+
+        📖 Обычные карточки
+
+    </button>
+
+
+    <button
+        id="writingModeButton"
+        class="mode-button"
+        onclick="setMode('writing')">
+
+        ✍️ Письменные карточки
+
+    </button>
+
+</div>
+
+
+<!-- =========================
+     КАРТОЧКА
+========================= -->
+
+<div id="card"
+     class="card">
+
+</div>
+
+
+<!-- =========================
+     ПИСЬМЕННЫЙ ВВОД
+========================= -->
+
+<div id="writingArea"
+     class="writing-area">
+
+
+    <input
+        id="writingInput"
+        class="writing-input"
+        type="text"
+        placeholder="Напиши pinyin латинскими буквами"
+        autocomplete="off">
+
+
+    <div class="input-hint">
+
+        Например: fudao
+
+    </div>
+
+
+    <br>
+
+
+    <button
+        class="check"
+        onclick="checkWritingAnswer()">
+
+        Проверить →
+
+    </button>
+
+
+</div>
+
+
+<!-- =========================
+     ОТВЕТ
+========================= -->
+
+<div id="answer"
+     class="answer">
+
+
+    <div id="chinese"
+         class="chinese">
+
+    </div>
+
+
+    <button
+        class="sound"
+        onclick="speakChinese()">
+
+        🔊 Произнести
+
+    </button>
+
+
+    <div id="pinyin"
+         class="pinyin">
+
+    </div>
+
+
+    <div class="translation">
+
+        🇷🇺 <b>Русский:</b>
+
+        <span id="russian"></span>
+
+    </div>
+
+
+    <div class="translation">
+
+        🇺🇿 <b>Узбекский:</b>
+
+        <span id="uzbek"></span>
+
+    </div>
+
+
+    <!--
+         Сравнение письменного ответа
+    -->
+
+    <div id="comparison"
+         class="comparison">
+
+
+        <div class="your-answer">
+
+            ✍️ Твой ответ:
+
+            <b id="yourAnswerText"></b>
+
+        </div>
+
+
+        <div class="correct-answer">
+
+            ✅ Правильный:
+
+            <b id="correctAnswerText"></b>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================
+     ОБЫЧНЫЕ КНОПКИ
+========================= -->
+
+<div id="choiceButtons">
+
+
+    <button
+        class="know"
+        onclick="showNormalAnswer(true)">
+
+        Знал ✓
+
+    </button>
+
+
+    <button
+        class="dontknow"
+        onclick="showNormalAnswer(false)">
+
+        Не знал ✕
+
+    </button>
+
+
+</div>
+
+
+<!-- =========================
+     ПОДТВЕРЖДЕНИЕ
+========================= -->
+
+<div id="confirmationButtons">
+
+
+    <button
+        id="confirmButton"
+        class="confirm"
+        onclick="confirmNormalAnswer()">
+
+        ✓ Подтвердить
+
+    </button>
+
+
+    <button
+        id="cancelButton"
+        class="cancel"
+        onclick="cancelAnswer()">
+
+        ✕ Изменить ответ
+
+    </button>
+
+
+</div>
+
+
+<!-- =========================
+     ПИСЬМЕННАЯ ОЦЕНКА
+========================= -->
+
+<div id="writingDecision"
+     style="display:none;">
+
+
+    <button
+        class="correct"
+        onclick="manualWritingResult(true)">
+
+        ✓ Правильно
+
+    </button>
+
+
+    <button
+        class="incorrect"
+        onclick="manualWritingResult(false)">
+
+        ✕ Неправильно
+
+    </button>
+
+
+</div>
+
+
+<br>
+
+
+<!-- =========================
+     НАЗАД
+========================= -->
+
+<button
+    id="backButton"
+    class="back"
+    onclick="previousCard()">
+
+    ← Назад
+
+</button>
+
+
+<!-- =========================
+     ЭКРАН КОНЦА
+========================= -->
+
+<div id="finishScreen">
+
+
+    <h2>🎉 Колода закончена!</h2>
+
+
+    <div class="result">
+
+        ✓ Знал:
+        <b id="finalGood">0</b>
+
+    </div>
+
+
+    <div class="result">
+
+        ✕ Не знал:
+        <b id="finalBad">0</b>
+
+    </div>
+
+
+    <div id="percentage"
+         class="percentage">
+
+    </div>
+
+
+    <div id="unknownWords"
+         class="unknown-list">
+
+    </div>
+
+
+    <div class="finish-buttons">
+
+
+        <button
+            id="repeatButton"
+            class="repeat"
+            onclick="repeatUnknown()">
+
+            🔄 Повторить ошибки
+
+        </button>
+
+
+        <button
+            class="restart"
+            onclick="restartDeck()">
+
+            🔀 Начать заново
+
+        </button>
+
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+/* =====================================================
+   СЛОВА
+===================================================== */
+
+const cards = [
+
+    {
+        uz: "salom",
+        pinyin: "nǐ hǎo",
+        answer: "ni hao",
+        chinese: "你好",
+        ru: "Привет"
+    },
+
+    {
+        uz: "mumkin",
+        pinyin: "kěyǐ",
+        answer: "keyi",
+        chinese: "可以",
+        ru: "Можно, мочь"
+    },
+
+    {
+        uz: "maslahat",
+        pinyin: "fǔdǎo",
+        answer: "fudao",
+        chinese: "辅导",
+        ru: "Помогать в учёбе"
+    },
+
+    {
+        uz: "xonim",
+        pinyin: "xiǎojiě",
+        answer: "xiaojie",
+        chinese: "小姐",
+        ru: "Девушка, мисс"
+    },
+
+    {
+        uz: "og‘zaki",
+        pinyin: "kǒuyǔ",
+        answer: "kouyu",
+        chinese: "口语",
+        ru: "Разговорный язык"
+    },
+
+    {
+        uz: "grammatika",
+        pinyin: "yǔfǎ",
+        answer: "yufa",
+        chinese: "语法",
+        ru: "Грамматика"
+    },
+
+    {
+        uz: "Fransuz tili",
+        pinyin: "Fǎyǔ",
+        answer: "fayu",
+        chinese: "法语",
+        ru: "Французский язык"
+    },
+
+    {
+        uz: "iltimos qilish",
+        pinyin: "tǎo hǎo",
+        answer: "tao hao",
+        chinese: "讨好",
+        ru: "Угождать"
+    },
+
+    {
+        uz: "bilmoq",
+        pinyin: "liǎojiě",
+        answer: "liaojie",
+        chinese: "了解",
+        ru: "Понимать"
+    },
+
+    {
+        uz: "do‘stona",
+        pinyin: "yǒuhǎo",
+        answer: "youhao",
+        chinese: "友好",
+        ru: "Дружелюбный"
+    },
+
+    {
+        uz: "soyabon",
+        pinyin: "yǔsǎn",
+        answer: "yusan",
+        chinese: "雨伞",
+        ru: "Зонт"
+    },
+
+    {
+        uz: "qo‘l soat",
+        pinyin: "shǒubiǎo",
+        answer: "shoubiao",
+        chinese: "手表",
+        ru: "Наручные часы"
+    }
+
+];
+
+
+/* =====================================================
+   ПЕРЕМЕННЫЕ
+===================================================== */
+
+let deck = [...cards];
+
+let current = 0;
+
+let mode = "normal";
+
+let pendingAnswer = null;
+
+let results = {};
+
+
+/* =====================================================
+   ПЕРЕМЕШИВАНИЕ
+===================================================== */
+
+function shuffle(array) {
+
+    for (
+        let i = array.length - 1;
+        i > 0;
+        i--
+    ) {
+
+        const j =
+            Math.floor(
+                Math.random() * (i + 1)
+            );
+
+        [
+            array[i],
+            array[j]
+        ] = [
+            array[j],
+            array[i]
+        ];
+
+    }
+
+}
+
+
+/* =====================================================
+   ВЫБОР РЕЖИМА
+===================================================== */
+
+function setMode(newMode) {
+
+    mode = newMode;
+
+
+    document
+        .getElementById("normalModeButton")
+        .classList
+        .remove("active");
+
+
+    document
+        .getElementById("writingModeButton")
+        .classList
+        .remove("active");
+
+
+    if (mode === "normal") {
+
+        document
+            .getElementById("normalModeButton")
+            .classList
+            .add("active");
+
+    } else {
+
+        document
+            .getElementById("writingModeButton")
+            .classList
+            .add("active");
+
+    }
+
+
+    render();
+
+}
+
+
+/* =====================================================
+   ОТРИСОВКА
+===================================================== */
+
+function render() {
+
+
+    if (current >= deck.length) {
+
+        showFinishScreen();
+
+        return;
+
+    }
+
+
+    const word = deck[current];
+
+
+    document
+        .getElementById("card")
+        .style.display = "flex";
+
+
+    document
+        .getElementById("card")
+        .innerText = word.uz;
+
+
+    document
+        .getElementById("progress")
+        .innerText =
+        `Карточка ${current + 1} из ${deck.length}`;
+
+
+    const percent =
+        ((current) / deck.length) * 100;
+
+
+    document
+        .getElementById("progressBar")
+        .style.width =
+        percent + "%";
+
+
+    /* Скрываем ответ */
+
+    document
+        .getElementById("answer")
+        .style.display = "none";
+
+
+    document
+        .getElementById("comparison")
+        .style.display = "none";
+
+
+    document
+        .getElementById("confirmButton")
+        .style.display = "none";
+
+
+    document
+        .getElementById("cancelButton")
+        .style.display = "none";
+
+
+    document
+        .getElementById("writingDecision")
+        .style.display = "none";
+
+
+    pendingAnswer = null;
+
+
+    /* ======================
+       ОБЫЧНЫЙ РЕЖИМ
+    ====================== */
+
+    if (mode === "normal") {
+
+        document
+            .getElementById("choiceButtons")
+            .style.display = "block";
+
+
+        document
+            .getElementById("writingArea")
+            .style.display = "none";
+
+    }
+
+
+    /* ======================
+       ПИСЬМЕННЫЙ РЕЖИМ
+    ====================== */
+
+    else {
+
+        document
+            .getElementById("choiceButtons")
+            .style.display = "none";
+
+
+        document
+            .getElementById("writingArea")
+            .style.display = "block";
+
+
+        document
+            .getElementById("writingInput")
+            .value = "";
+
+
+        setTimeout(() => {
+
+            document
+                .getElementById("writingInput")
+                .focus();
+
+        }, 100);
+
+    }
+
+
+    updateBackButton();
+
+    updateScore();
+
+}
+
+
+/* =====================================================
+   ПОКАЗ ОТВЕТА — ОБЫЧНЫЙ
+===================================================== */
+
+function showNormalAnswer(known) {
+
+    pendingAnswer = known;
+
+
+    const word = deck[current];
+
+
+    showWordAnswer(word);
+
+
+    document
+        .getElementById("choiceButtons")
+        .style.display = "none";
+
+
+    document
+        .getElementById("confirmButton")
+        .style.display = "inline-block";
+
+
+    document
+        .getElementById("cancelButton")
+        .style.display = "inline-block";
+
+}
+
+
+/* =====================================================
+   ПОКАЗ СЛОВА
+===================================================== */
+
+function showWordAnswer(word) {
+
+    document
+        .getElementById("chinese")
+        .innerText =
+        word.chinese;
+
+
+    document
+        .getElementById("pinyin")
+        .innerText =
+        word.pinyin;
+
+
+    document
+        .getElementById("russian")
+        .innerText =
+        word.ru;
+
+
+    document
+        .getElementById("uzbek")
+        .innerText =
+        word.uz;
+
+
+    document
+        .getElementById("answer")
+        .style.display =
+        "block";
+
+}
+
+
+/* =====================================================
+   ОТМЕНА ОТВЕТА
+===================================================== */
+
+function cancelAnswer() {
+
+    pendingAnswer = null;
+
+
+    document
+        .getElementById("answer")
+        .style.display = "none";
+
+
+    document
+        .getElementById("confirmButton")
+        .style.display = "none";
+
+
+    document
+        .getElementById("cancelButton")
+        .style.display = "none";
+
+
+    document
+        .getElementById("choiceButtons")
+        .style.display = "block";
+
+}
+
+
+/* =====================================================
+   ПОДТВЕРЖДЕНИЕ ОБЫЧНОГО
+===================================================== */
+
+function confirmNormalAnswer() {
+
+    if (pendingAnswer === null) {
+
+        return;
+
+    }
+
+
+    const word = deck[current];
+
+
+    results[word.chinese] =
+        pendingAnswer;
+
+
+    pendingAnswer = null;
+
+
+    updateScore();
+
+
+    current++;
+
+
+    setTimeout(() => {
+
+        render();
+
+    }, 200);
+
+}
+
+
+/* =====================================================
+   ПИСЬМЕННЫЙ РЕЖИМ
+===================================================== */
+
+function checkWritingAnswer() {
+
+    const input =
+        document
+            .getElementById("writingInput")
+            .value
+            .trim();
+
+
+    if (!input) {
+
+        alert(
+            "Напиши pinyin латинскими буквами."
+        );
+
+        return;
+
+    }
+
+
+    const word = deck[current];
+
+
+    /* Показываем правильный ответ */
+
+    showWordAnswer(word);
+
+
+    document
+        .getElementById("yourAnswerText")
+        .innerText =
+        input;
+
+
+    document
+        .getElementById("correctAnswerText")
+        .innerText =
+        word.pinyin;
+
+
+    document
+        .getElementById("comparison")
+        .style.display =
+        "block";
+
+
+    document
+        .getElementById("writingArea")
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById("writingDecision")
+        .style.display =
+        "block";
+
+}
+
+
+/* =====================================================
+   САМОСТОЯТЕЛЬНАЯ ОЦЕНКА
+===================================================== */
+
+function manualWritingResult(isCorrect) {
+
+    const word = deck[current];
+
+
+    results[word.chinese] =
+        isCorrect;
+
+
+    document
+        .getElementById("writingDecision")
+        .style.display =
+        "none";
+
+
+    updateScore();
+
+
+    current++;
+
+
+    setTimeout(() => {
+
+        render();
+
+    }, 200);
+
+}
+
+
+/* =====================================================
+   ENTER
+===================================================== */
+
+document
+    .getElementById("writingInput")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                checkWritingAnswer();
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   НАЗАД
+===================================================== */
+
+function previousCard() {
+
+    if (current <= 0) {
+
+        return;
+
+    }
+
+
+    current--;
+
+
+    render();
+
+}
+
+
+/* =====================================================
+   КНОПКА НАЗАД
+===================================================== */
+
+function updateBackButton() {
+
+    const button =
+        document.getElementById("backButton");
+
+
+    if (current <= 0) {
+
+        button.style.display =
+            "none";
+
+    } else {
+
+        button.style.display =
+            "inline-block";
+
+    }
+
+}
+
+
+/* =====================================================
+   СТАТИСТИКА
+===================================================== */
+
+function updateScore() {
+
+    let good = 0;
+
+    let bad = 0;
+
+
+    Object.values(results)
+        .forEach(function(result) {
+
+            if (result === true) {
+
+                good++;
+
+            }
+
+            if (result === false) {
+
+                bad++;
+
+            }
+
+        });
+
+
+    document
+        .getElementById("good")
+        .innerText =
+        good;
+
+
+    document
+        .getElementById("bad")
+        .innerText =
+        bad;
+
+}
+
+
+/* =====================================================
+   ПРОИЗНОШЕНИЕ
+===================================================== */
+
+function speakChinese() {
+
+    const word =
+        deck[current];
+
+
+    if (!word) {
+
+        return;
+
+    }
+
+
+    speakWord(word.chinese);
+
+}
+
+
+function speakWord(text) {
+
+    const speech =
+        new SpeechSynthesisUtterance(text);
+
+
+    speech.lang =
+        "zh-CN";
+
+
+    speech.rate =
+        0.75;
+
+
+    speech.pitch =
+        1;
+
+
+    window.speechSynthesis.cancel();
+
+
+    window.speechSynthesis.speak(
+        speech
+    );
+
+}
+
+
+/* =====================================================
+   КОНЕЦ КОЛОДЫ
+===================================================== */
+
+function showFinishScreen() {
+
+    document
+        .getElementById("card")
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById("writingArea")
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById("answer")
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById("choiceButtons")
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById("confirmationButtons")
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById("writingDecision")
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById("backButton")
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById("progress")
+        .style.display =
+        "none";
+
+
+    document
+        .querySelector(".progress-container")
+        .style.display =
+        "none";
+
+
+    document
+        .querySelector(".mode-buttons")
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById("finishScreen")
+        .style.display =
+        "block";
+
+
+    updateScore();
+
+
+    const good =
+        Number(
+            document
+                .getElementById("good")
+                .innerText
+        );
+
+
+    const bad =
+        Number(
+            document
+                .getElementById("bad")
+                .innerText
+        );
+
+
+    const total =
+        good + bad;
+
+
+    document
+        .getElementById("finalGood")
+        .innerText =
+        good;
+
+
+    document
+        .getElementById("finalBad")
+        .innerText =
+        bad;
+
+
+    let percentage = 0;
+
+
+    if (total > 0) {
+
+        percentage =
+            Math.round(
+                (good / total) * 100
+            );
+
+    }
+
+
+    document
+        .getElementById("percentage")
+        .innerText =
+        `🏆 Результат: ${percentage}%`;
+
+
+    showUnknownWords();
+
+}
+
+
+/* =====================================================
+   СЛОВА С ОШИБКАМИ
+===================================================== */
+
+function getUnknownWords() {
+
+    return cards.filter(function(word) {
+
+        return results[word.chinese] === false;
+
+    });
+
+}
+
+
+/* =====================================================
+   ПОКАЗ ОШИБОК
+===================================================== */
+
+function showUnknownWords() {
+
+    const container =
+        document
+            .getElementById("unknownWords");
+
+
+    container.innerHTML = "";
+
+
+    const unknown =
+        getUnknownWords();
+
+
+    if (unknown.length === 0) {
+
+        container.innerHTML =
+            "<h3>🔥 Отлично! Все слова знаешь!</h3>";
+
+
+        document
+            .getElementById("repeatButton")
+            .style.display =
+            "none";
+
+
+        return;
+
+    }
+
+
+    document
+        .getElementById("repeatButton")
+        .style.display =
+        "inline-block";
+
+
+    const title =
+        document.createElement("h3");
+
+
+    title.innerText =
+        "📚 Слова, которые нужно повторить:";
+
+
+    container.appendChild(title);
+
+
+    unknown.forEach(function(word) {
+
+        const item =
+            document.createElement("div");
+
+
+        item.className =
+            "unknown-item";
+
+
+        item.innerHTML = `
+
+            <div class="unknown-chinese">
+
+                ${word.chinese}
+
+            </div>
+
+
+            <div class="unknown-pinyin">
+
+                ${word.pinyin}
+
+            </div>
+
+
+            <div class="unknown-translation">
+
+                🇷🇺 ${word.ru}
+
+            </div>
+
+
+            <div class="unknown-translation">
+
+                🇺🇿 ${word.uz}
+
+            </div>
+
+
+            <button
+                class="sound"
+                onclick="speakWord('${word.chinese}')">
+
+                🔊
+
+            </button>
+
+        `;
+
+
+        container.appendChild(item);
+
+    });
+
+}
+
+
+/* =====================================================
+   ПОВТОРИТЬ ОШИБКИ
+===================================================== */
+
+function repeatUnknown() {
+
+    const unknown =
+        getUnknownWords();
+
+
+    if (unknown.length === 0) {
+
+        return;
+
+    }
+
+
+    deck =
+        [...unknown];
+
+
+    current = 0;
+
+
+    results = {};
+
+
+    document
+        .getElementById("good")
+        .innerText =
+        "0";
+
+
+    document
+        .getElementById("bad")
+        .innerText =
+        "0";
+
+
+    document
+        .getElementById("finishScreen")
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById("card")
+        .style.display =
+        "flex";
+
+
+    document
+        .getElementById("progress")
+        .style.display =
+        "block";
+
+
+    document
+        .querySelector(".progress-container")
+        .style.display =
+        "block";
+
+
+    document
+        .querySelector(".mode-buttons")
+        .style.display =
+        "block";
+
+
+    document
+        .getElementById("confirmationButtons")
+        .style.display =
+        "block";
+
+
+    shuffle(deck);
+
+
+    render();
+
+}
+
+
+/* =====================================================
+   НАЧАТЬ ЗАНОВО
+===================================================== */
+
+function restartConfirm() {
+
+    const answer =
+        confirm(
+            "Начать заново?\n\n" +
+            "Текущий прогресс этой попытки будет сброшен."
+        );
+
+
+    if (answer) {
+
+        restartDeck();
+
+    }
+
+}
+
+
+function restartDeck() {
+
+    deck =
+        [...cards];
+
+
+    current = 0;
+
+
+    results = {};
+
+
+    pendingAnswer = null;
+
+
+    document
+        .getElementById("good")
+        .innerText =
+        "0";
+
+
+    document
+        .getElementById("bad")
+        .innerText =
+        "0";
+
+
+    document
+        .getElementById("finishScreen")
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById("card")
+        .style.display =
+        "flex";
+
+
+    document
+        .getElementById("progress")
+        .style.display =
+        "block";
+
+
+    document
+        .querySelector(".progress-container")
+        .style.display =
+        "block";
+
+
+    document
+        .querySelector(".mode-buttons")
+        .style.display =
+        "block";
+
+
+    document
+        .getElementById("confirmationButtons")
+        .style.display =
+        "block";
+
+
+    shuffle(deck);
+
+
+    render();
+
+}
+
+
+/* =====================================================
+   ГОРЯЧИЕ КЛАВИШИ
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+
+        /*
+           Enter в письменном поле
+           обрабатывается отдельно.
+        */
+
+        if (
+            document.activeElement.id ===
+            "writingInput"
+        ) {
+
+            return;
+
+        }
+
+
+        /* 1 = Знал */
+
+        if (
+            event.key === "1" &&
+            mode === "normal"
+        ) {
+
+            if (
+                pendingAnswer === null &&
+                current < deck.length
+            ) {
+
+                showNormalAnswer(true);
+
+            }
+
+        }
+
+
+        /* 2 = Не знал */
+
+        if (
+            event.key === "2" &&
+            mode === "normal"
+        ) {
+
+            if (
+                pendingAnswer === null &&
+                current < deck.length
+            ) {
+
+                showNormalAnswer(false);
+
+            }
+
+        }
+
+
+        /* Enter = подтвердить */
+
+        if (event.key === "Enter") {
+
+            if (
+                pendingAnswer !== null
+            ) {
+
+                confirmNormalAnswer();
+
+            }
+
+        }
+
+
+        /* Стрелка влево = назад */
+
+        if (
+            event.key === "ArrowLeft"
+        ) {
+
+            previousCard();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   ЗАПУСК
+===================================================== */
+
+shuffle(deck);
+
+render();
+
+</script>
+
+
+</body>
+
+</html>
