@@ -553,6 +553,188 @@ button:hover {
 }
 
 
+
+/* =========================
+   МОИ СЛОВА
+========================= */
+
+.word-manager {
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    padding: 18px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.word-manager h2 {
+    margin: 0 0 8px;
+    text-align: center;
+}
+
+.word-manager-note {
+    color: #666;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.word-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.word-form input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    font-size: 17px;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+}
+
+.word-form .full {
+    grid-column: 1 / -1;
+}
+
+.word-form-actions {
+    grid-column: 1 / -1;
+    text-align: center;
+}
+
+.word-list {
+    margin-top: 18px;
+}
+
+.my-word-item {
+    background: #f7f7f7;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.my-word-info {
+    min-width: 0;
+}
+
+.my-word-main {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.my-word-sub {
+    color: #555;
+    font-size: 14px;
+    margin-top: 3px;
+}
+
+.my-word-actions {
+    flex-shrink: 0;
+}
+
+.small-button {
+    padding: 8px 12px;
+    font-size: 14px;
+    margin: 2px;
+}
+
+.edit-word {
+    background: #2196F3;
+    color: white;
+}
+
+.delete-word {
+    background: #f44336;
+    color: white;
+}
+
+.export-word {
+    background: #673AB7;
+    color: white;
+}
+
+.import-word {
+    background: #009688;
+    color: white;
+}
+
+.add-word {
+    background: #4CAF50;
+    color: white;
+}
+
+.cancel-edit {
+    background: #777;
+    color: white;
+}
+
+@media (max-width: 600px) {
+    body {
+        margin: 8px auto;
+        padding: 10px;
+    }
+
+    .top-bar {
+        gap: 8px;
+        align-items: center;
+    }
+
+    .top-bar h1 {
+        font-size: 24px;
+        margin: 0;
+    }
+
+    .restart-top {
+        font-size: 13px;
+        padding: 8px 9px;
+    }
+
+    .mode-buttons button {
+        width: 100%;
+        margin: 4px 0;
+    }
+
+    .card {
+        padding: 45px 12px;
+        font-size: 32px;
+    }
+
+    .answer {
+        padding: 18px 10px;
+    }
+
+    .word-form {
+        grid-template-columns: 1fr;
+    }
+
+    .word-form .full,
+    .word-form-actions {
+        grid-column: auto;
+    }
+
+    .word-form input {
+        font-size: 16px;
+    }
+
+    .my-word-item {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .my-word-actions {
+        width: 100%;
+    }
+
+    .my-word-actions button {
+        margin-left: 0;
+    }
+}
+
 </style>
 
 </head>
@@ -634,6 +816,37 @@ button:hover {
 
     </button>
 
+</div>
+
+<!-- =========================
+     МОИ СЛОВА
+========================= -->
+
+<div class="word-manager">
+    <h2>📚 Мои слова <span id="myWordsCount">(0)</span></h2>
+    <div class="word-manager-note">
+        Добавляй слова прямо с телефона. Иероглифы — по желанию.
+        Pinyin для письменного режима можно писать без тонов, например: fudao.
+    </div>
+
+    <div class="word-form">
+        <input id="wordUz" type="text" placeholder="🇺🇿 Узбекский перевод *">
+        <input id="wordRu" type="text" placeholder="🇷🇺 Русский перевод *">
+        <input id="wordPinyin" type="text" placeholder="🔤 Pinyin латиницей *">
+        <input id="wordChinese" class="full" type="text" placeholder="🇨🇳 Иероглифы (необязательно)">
+        <div class="word-form-actions">
+            <button id="saveWordButton" class="add-word" onclick="saveMyWord()">➕ Добавить слово</button>
+            <button id="cancelEditButton" class="cancel-edit" onclick="cancelWordEdit()" style="display:none;">Отмена</button>
+        </div>
+    </div>
+
+    <div style="text-align:center; margin-top:10px;">
+        <button class="export-word small-button" onclick="exportMyWords()">📤 Экспорт</button>
+        <button class="import-word small-button" onclick="document.getElementById('importWordsInput').click()">📥 Импорт</button>
+        <input id="importWordsInput" type="file" accept="application/json" style="display:none" onchange="importMyWords(event)">
+    </div>
+
+    <div id="myWordsList" class="word-list"></div>
 </div>
 
 
@@ -941,7 +1154,7 @@ button:hover {
    СЛОВА
 ===================================================== */
 
-const cards = [
+const builtInCards = [
 
     {
         uz: "salom",
@@ -1303,7 +1516,7 @@ function showWordAnswer(word) {
     document
         .getElementById("chinese")
         .innerText =
-        word.chinese;
+        word.chinese || "—";
 
 
     document
@@ -1379,7 +1592,7 @@ function confirmNormalAnswer() {
     const word = deck[current];
 
 
-    results[word.chinese] =
+    results[wordKey(word)] =
         pendingAnswer;
 
 
@@ -1474,7 +1687,7 @@ function manualWritingResult(isCorrect) {
     const word = deck[current];
 
 
-    results[word.chinese] =
+    results[wordKey(word)] =
         isCorrect;
 
 
@@ -1624,6 +1837,10 @@ function speakChinese() {
 
     }
 
+    if (!word.chinese) {
+        alert("У этого слова нет иероглифов. Добавь их при редактировании, если хочешь использовать китайское произношение.");
+        return;
+    }
 
     speakWord(word.chinese);
 
@@ -1797,7 +2014,7 @@ function getUnknownWords() {
 
     return cards.filter(function(word) {
 
-        return results[word.chinese] === false;
+        return results[wordKey(word)] === false;
 
     });
 
@@ -2090,6 +2307,261 @@ function restartDeck() {
 }
 
 
+
+/* =====================================================
+   МОИ СЛОВА — ДОБАВЛЕНИЕ / РЕДАКТИРОВАНИЕ
+===================================================== */
+
+let editingWordId = null;
+
+function saveUserCards() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(userCards));
+}
+
+function renderMyWords() {
+    const container = document.getElementById("myWordsList");
+    const count = document.getElementById("myWordsCount");
+
+    if (!container || !count) return;
+
+    count.innerText = "(" + userCards.length + ")";
+    container.innerHTML = "";
+
+    if (userCards.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:#777;padding:10px;">Пока нет добавленных слов.</div>';
+        return;
+    }
+
+    userCards.forEach(function(word) {
+        const item = document.createElement("div");
+        item.className = "my-word-item";
+
+        const info = document.createElement("div");
+        info.className = "my-word-info";
+
+        const main = document.createElement("div");
+        main.className = "my-word-main";
+        main.innerText = (word.chinese ? word.chinese + " — " : "") + word.uz;
+
+        const sub = document.createElement("div");
+        sub.className = "my-word-sub";
+        sub.innerText = word.pinyin + " • " + word.ru + (word.chinese ? "" : " • без иероглифов");
+
+        info.appendChild(main);
+        info.appendChild(sub);
+
+        const actions = document.createElement("div");
+        actions.className = "my-word-actions";
+
+        const edit = document.createElement("button");
+        edit.className = "small-button edit-word";
+        edit.innerText = "✏️ Изменить";
+        edit.onclick = function() {
+            editMyWord(word.id);
+        };
+
+        const del = document.createElement("button");
+        del.className = "small-button delete-word";
+        del.innerText = "🗑️ Удалить";
+        del.onclick = function() {
+            deleteMyWord(word.id);
+        };
+
+        actions.appendChild(edit);
+        actions.appendChild(del);
+
+        item.appendChild(info);
+        item.appendChild(actions);
+        container.appendChild(item);
+    });
+}
+
+function saveMyWord() {
+    const uz = document.getElementById("wordUz").value.trim();
+    const ru = document.getElementById("wordRu").value.trim();
+    const pinyin = document.getElementById("wordPinyin").value.trim();
+    const chinese = document.getElementById("wordChinese").value.trim();
+
+    if (!uz || !ru || !pinyin) {
+        alert("Заполни Узбекский перевод, Русский перевод и Pinyin.");
+        return;
+    }
+
+    const word = {
+        id: editingWordId || makeId(),
+        uz: uz,
+        ru: ru,
+        pinyin: pinyin,
+        answer: pinyin.toLowerCase(),
+        chinese: chinese
+    };
+
+    if (editingWordId) {
+        const index = userCards.findIndex(function(item) {
+            return item.id === editingWordId;
+        });
+
+        if (index !== -1) {
+            userCards[index] = word;
+        }
+    } else {
+        userCards.push(word);
+    }
+
+    saveUserCards();
+    rebuildCards();
+    renderMyWords();
+    cancelWordEdit();
+
+    // Добавляем новое слово в текущую колоду, не меняя текущую карточку.
+    if (!editingWordId) {
+        deck.push(word);
+    } else {
+        deck = deck.map(function(item) {
+            return item.id === word.id ? word : item;
+        });
+    }
+
+    alert(editingWordId ? "Слово изменено!" : "Слово добавлено!");
+}
+
+function editMyWord(id) {
+    const word = userCards.find(function(item) {
+        return item.id === id;
+    });
+
+    if (!word) return;
+
+    editingWordId = id;
+
+    document.getElementById("wordUz").value = word.uz || "";
+    document.getElementById("wordRu").value = word.ru || "";
+    document.getElementById("wordPinyin").value = word.pinyin || "";
+    document.getElementById("wordChinese").value = word.chinese || "";
+
+    document.getElementById("saveWordButton").innerText = "💾 Сохранить изменения";
+    document.getElementById("cancelEditButton").style.display = "inline-block";
+
+    document.getElementById("wordUz").scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+function cancelWordEdit() {
+    editingWordId = null;
+
+    document.getElementById("wordUz").value = "";
+    document.getElementById("wordRu").value = "";
+    document.getElementById("wordPinyin").value = "";
+    document.getElementById("wordChinese").value = "";
+
+    document.getElementById("saveWordButton").innerText = "➕ Добавить слово";
+    document.getElementById("cancelEditButton").style.display = "none";
+}
+
+function deleteMyWord(id) {
+    const word = userCards.find(function(item) {
+        return item.id === id;
+    });
+
+    if (!word) return;
+
+    if (!confirm("Удалить слово «" + word.uz + "»?")) {
+        return;
+    }
+
+    userCards = userCards.filter(function(item) {
+        return item.id !== id;
+    });
+
+    saveUserCards();
+    rebuildCards();
+
+    // Убираем удалённое слово из текущей колоды.
+    deck = deck.filter(function(item) {
+        return item.id !== id;
+    });
+
+    if (current >= deck.length && deck.length > 0) {
+        current = deck.length - 1;
+    }
+
+    delete results[id];
+    renderMyWords();
+    render();
+}
+
+function exportMyWords() {
+    const data = JSON.stringify(userCards, null, 2);
+    const blob = new Blob([data], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "chinese-my-words.json";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+}
+
+function importMyWords(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function() {
+        try {
+            const imported = JSON.parse(reader.result);
+
+            if (!Array.isArray(imported)) {
+                throw new Error("Неверный формат");
+            }
+
+            const clean = imported
+                .filter(function(word) {
+                    return word &&
+                        typeof word.uz === "string" &&
+                        typeof word.ru === "string" &&
+                        typeof word.pinyin === "string";
+                })
+                .map(function(word) {
+                    return {
+                        id: word.id || makeId(),
+                        uz: word.uz.trim(),
+                        ru: word.ru.trim(),
+                        pinyin: word.pinyin.trim(),
+                        answer: (word.answer || word.pinyin || "").trim().toLowerCase(),
+                        chinese: (word.chinese || "").trim()
+                    };
+                })
+                .filter(function(word) {
+                    return word.uz && word.ru && word.pinyin;
+                });
+
+            userCards = clean;
+            saveUserCards();
+            rebuildCards();
+            restartDeck();
+            renderMyWords();
+
+            alert("Импортировано слов: " + clean.length);
+        } catch (error) {
+            alert("Не удалось импортировать файл слов.");
+        }
+
+        event.target.value = "";
+    };
+
+    reader.readAsText(file);
+}
+
+
+rebuildCards();
+deck = [...cards];
+
 /* =====================================================
    ГОРЯЧИЕ КЛАВИШИ
 ===================================================== */
@@ -2187,6 +2659,7 @@ document.addEventListener(
 
 shuffle(deck);
 
+renderMyWords();
 render();
 
 </script>
