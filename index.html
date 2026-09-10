@@ -829,6 +829,164 @@ button:hover {
     }
 }
 
+
+
+.word-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 4px 2px;
+    font-size: 15px;
+}
+
+.word-options label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.word-options input {
+    width: auto;
+}
+
+.my-word-controls {
+    margin-top: 9px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.word-section-toggle {
+    border: 1px solid #aaa;
+    background: white;
+    color: #333;
+    padding: 7px 10px;
+    border-radius: 7px;
+    font-size: 13px;
+}
+
+.word-section-toggle.active {
+    background: #333;
+    color: white;
+}
+
+/* =========================
+   УЧИТЬ СЛОВА
+========================= */
+
+.learning-progress {
+    max-width: 850px;
+    margin: 10px auto 15px;
+    text-align: center;
+    color: #666;
+}
+
+.learning-card {
+    max-width: 850px;
+    margin: 0 auto;
+    background: white;
+    border: 2px solid #333;
+    border-radius: 14px;
+    padding: 30px 20px;
+    text-align: center;
+    min-height: 300px;
+    box-sizing: border-box;
+}
+
+.learning-prompt {
+    font-size: 34px;
+    font-weight: bold;
+    margin: 20px 0 28px;
+}
+
+.learning-details {
+    margin-top: 10px;
+}
+
+.learning-chinese {
+    font-size: 58px;
+    font-weight: bold;
+    margin: 8px 0;
+}
+
+.learning-pinyin {
+    font-size: 29px;
+    margin: 12px 0 20px;
+}
+
+.learning-translations {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin: 15px auto 20px;
+    max-width: 560px;
+    text-align: left;
+}
+
+.learning-translation {
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 18px;
+}
+
+.show-learning {
+    background: #333;
+    color: white;
+    margin-top: 15px;
+}
+
+.learning-writing {
+    margin: 22px auto 5px;
+    max-width: 560px;
+}
+
+.learning-writing input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px;
+    font-size: 19px;
+    text-align: center;
+    border: 2px solid #bbb;
+    border-radius: 9px;
+    margin-bottom: 8px;
+}
+
+.learning-writing-result {
+    min-height: 28px;
+    margin-top: 8px;
+    font-size: 17px;
+}
+
+.learning-actions {
+    text-align: center;
+    margin-top: 15px;
+}
+
+@media (max-width: 600px) {
+    .learning-card {
+        padding: 22px 12px;
+        min-height: 280px;
+    }
+
+    .learning-prompt {
+        font-size: 29px;
+    }
+
+    .learning-chinese {
+        font-size: 48px;
+    }
+
+    .learning-pinyin {
+        font-size: 25px;
+    }
+
+    .learning-actions button {
+        width: auto;
+    }
+}
+
 </style>
 
 </head>
@@ -840,6 +998,7 @@ button:hover {
     <h1>🇨🇳 Китайские карточки</h1>
     <div class="home-buttons">
         <button class="home-button" onclick="openTraining()">🎯 Тренировка</button>
+        <button class="home-button" onclick="openLearning()">📖 Учить слова</button>
         <button class="home-button" onclick="openWords()">📚 Мои слова</button>
     </div>
 </div>
@@ -1226,6 +1385,46 @@ button:hover {
 
 </div>
 
+
+<div id="learningScreen" class="screen" style="display:none;">
+    <div class="screen-header">
+        <h1>📖 Учить слова</h1>
+        <button class="menu-top" onclick="showHome()">☰ Меню</button>
+    </div>
+
+    <div class="learning-progress" id="learningProgress"></div>
+
+    <div class="learning-card">
+        <div id="learningUz" class="learning-prompt"></div>
+
+        <div id="learningDetails" class="learning-details" style="display:none;">
+            <div id="learningChinese" class="learning-chinese"></div>
+            <div id="learningPinyin" class="learning-pinyin"></div>
+
+            <div id="learningTranslations" class="learning-translations"></div>
+
+            <button class="sound" onclick="speakLearningWord()">🔊 Произнести</button>
+
+            <div class="learning-writing">
+                <input id="learningInput" type="text"
+                       placeholder="Напиши pinyin латинскими буквами"
+                       autocomplete="off">
+                <button class="check" onclick="checkLearningWriting()">✍️ Проверить написание</button>
+                <div id="learningWritingResult" class="learning-writing-result"></div>
+            </div>
+        </div>
+
+        <button id="showLearningButton" class="show-learning" onclick="showLearningDetails()">
+            👁 Показать слово
+        </button>
+    </div>
+
+    <div class="learning-actions">
+        <button class="back" onclick="previousLearningWord()">← Назад</button>
+        <button class="restart" onclick="nextLearningWord()">Следующее →</button>
+    </div>
+</div>
+
 <div id="wordsScreen" class="screen" style="display:none;">
     <div class="screen-header">
         <h1>📚 Мои слова</h1>
@@ -1245,8 +1444,13 @@ button:hover {
     <div class="word-form">
         <input id="wordUz" type="text" placeholder="🇺🇿 Узбекский перевод *">
         <input id="wordRu" type="text" placeholder="🇷🇺 Русский перевод (необязательно)">
+        <input id="wordEn" type="text" placeholder="🇬🇧 English (необязательно)">
         <input id="wordPinyin" type="text" placeholder="🔤 Pinyin латиницей *">
         <input id="wordChinese" class="full" type="text" placeholder="🇨🇳 Иероглифы (необязательно)">
+        <div class="word-options full">
+            <label><input id="wordAddLearning" type="checkbox" checked> 📖 Добавить в «Учить слова»</label>
+            <label><input id="wordAddTraining" type="checkbox"> 🎯 Добавить в «Тренировку»</label>
+        </div>
         <div class="word-form-actions">
             <button id="saveWordButton" class="add-word" onclick="saveMyWord()">➕ Добавить слово</button>
             <button id="cancelEditButton" class="cancel-edit" onclick="cancelWordEdit()" style="display:none;">Отмена</button>
@@ -1373,7 +1577,14 @@ function makeId() {
 function loadUserCards() {
     try {
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-        return Array.isArray(saved) ? saved : [];
+        if (!Array.isArray(saved)) return [];
+        return saved.map(function(word) {
+            return {
+                ...word,
+                inLearning: word.inLearning !== false,
+                inTraining: word.inTraining === true
+            };
+        });
     } catch (e) {
         return [];
     }
@@ -1406,7 +1617,23 @@ rebuildCards();
    ПЕРЕМЕННЫЕ
 ===================================================== */
 
-let deck = [...cards];
+function getTrainingCards() {
+    return cards.filter(function(word) {
+        return word.id && word.id.indexOf("builtin-") === 0
+            ? true
+            : !!word.inTraining;
+    });
+}
+
+function getLearningCards() {
+    return cards.filter(function(word) {
+        return word.id && word.id.indexOf("builtin-") === 0
+            ? true
+            : !!word.inLearning;
+    });
+}
+
+let deck = getTrainingCards();
 
 let current = 0;
 
@@ -2464,6 +2691,7 @@ function hideAllScreens() {
     document.getElementById("homeScreen").style.display = "none";
     document.getElementById("gameScreen").style.display = "none";
     document.getElementById("wordsScreen").style.display = "none";
+    document.getElementById("learningScreen").style.display = "none";
 }
 
 function showHome() {
@@ -2481,6 +2709,132 @@ function openWords() {
     hideAllScreens();
     document.getElementById("wordsScreen").style.display = "block";
     renderMyWords();
+}
+
+
+/* =====================================================
+   УЧИТЬ СЛОВА
+===================================================== */
+
+let learningDeck = [];
+let learningCurrent = 0;
+
+function openLearning() {
+    hideAllScreens();
+    document.getElementById("learningScreen").style.display = "block";
+
+    learningDeck = getLearningCards();
+    shuffle(learningDeck);
+    learningCurrent = 0;
+    renderLearningWord();
+}
+
+function renderLearningWord() {
+    if (learningDeck.length === 0) {
+        document.getElementById("learningProgress").innerText = "В разделе пока нет слов.";
+        document.getElementById("learningUz").innerText = "Добавь слово или включи его в «Учить слова»";
+        document.getElementById("learningDetails").style.display = "none";
+        document.getElementById("showLearningButton").style.display = "none";
+        return;
+    }
+
+    const word = learningDeck[learningCurrent];
+
+    document.getElementById("learningProgress").innerText =
+        `Слово ${learningCurrent + 1} из ${learningDeck.length}`;
+
+    document.getElementById("learningUz").innerText =
+        word.uz || "—";
+
+    document.getElementById("learningDetails").style.display = "none";
+    document.getElementById("showLearningButton").style.display = "inline-block";
+
+    document.getElementById("learningChinese").innerText = word.chinese || "Иероглифы не добавлены";
+    document.getElementById("learningPinyin").innerText = word.pinyin || "—";
+
+    const translations = document.getElementById("learningTranslations");
+    translations.innerHTML = "";
+
+    if (word.ru) {
+        const ru = document.createElement("div");
+        ru.className = "learning-translation";
+        ru.innerText = "🇷🇺 Русский: " + word.ru;
+        translations.appendChild(ru);
+    }
+
+    if (word.en) {
+        const en = document.createElement("div");
+        en.className = "learning-translation";
+        en.innerText = "🇬🇧 English: " + word.en;
+        translations.appendChild(en);
+    }
+
+    if (word.uz) {
+        const uz = document.createElement("div");
+        uz.className = "learning-translation";
+        uz.innerText = "🇺🇿 O‘zbek: " + word.uz;
+        translations.appendChild(uz);
+    }
+
+    document.getElementById("learningInput").value = "";
+    document.getElementById("learningWritingResult").innerText = "";
+}
+
+function showLearningDetails() {
+    document.getElementById("learningDetails").style.display = "block";
+    document.getElementById("showLearningButton").style.display = "none";
+}
+
+function speakLearningWord() {
+    const word = learningDeck[learningCurrent];
+
+    if (!word || !word.chinese) {
+        alert("У этого слова нет иероглифов.");
+        return;
+    }
+
+    speakWord(word.chinese);
+}
+
+function checkLearningWriting() {
+    const word = learningDeck[learningCurrent];
+    const input = document.getElementById("learningInput").value.trim().toLowerCase();
+    const result = document.getElementById("learningWritingResult");
+
+    if (!input) {
+        result.innerText = "Напиши pinyin.";
+        return;
+    }
+
+    const correct = (word.answer || word.pinyin || "")
+        .toLowerCase()
+        .replace(/\s+/g, "");
+
+    const typed = input.replace(/\s+/g, "");
+
+    if (typed === correct) {
+        result.innerText = "✓ Правильно!";
+    } else {
+        result.innerText = "✕ Не совсем. Правильный вариант: " + word.answer;
+    }
+}
+
+function nextLearningWord() {
+    if (learningCurrent < learningDeck.length - 1) {
+        learningCurrent++;
+        renderLearningWord();
+    } else {
+        learningCurrent = 0;
+        shuffle(learningDeck);
+        renderLearningWord();
+    }
+}
+
+function previousLearningWord() {
+    if (learningCurrent > 0) {
+        learningCurrent--;
+        renderLearningWord();
+    }
 }
 
 /* =====================================================
@@ -2520,10 +2874,34 @@ function renderMyWords() {
 
         const sub = document.createElement("div");
         sub.className = "my-word-sub";
-        sub.innerText = word.pinyin + (word.ru ? " • " + word.ru : "") + (word.chinese ? "" : " • без иероглифов");
+        sub.innerText =
+            word.pinyin +
+            (word.ru ? " • " + word.ru : "") +
+            (word.en ? " • " + word.en : "");
+
+        const controls = document.createElement("div");
+        controls.className = "my-word-controls";
+
+        const learningBtn = document.createElement("button");
+        learningBtn.className = "word-section-toggle" + (word.inLearning ? " active" : "");
+        learningBtn.innerText = word.inLearning ? "📖 В «Учить»" : "📖 Не учить";
+        learningBtn.onclick = function() {
+            toggleWordSection(word.id, "learning");
+        };
+
+        const trainingBtn = document.createElement("button");
+        trainingBtn.className = "word-section-toggle" + (word.inTraining ? " active" : "");
+        trainingBtn.innerText = word.inTraining ? "🎯 В «Тренировку»" : "🎯 Не тренировать";
+        trainingBtn.onclick = function() {
+            toggleWordSection(word.id, "training");
+        };
+
+        controls.appendChild(learningBtn);
+        controls.appendChild(trainingBtn);
 
         info.appendChild(main);
         info.appendChild(sub);
+        info.appendChild(controls);
 
         const actions = document.createElement("div");
         actions.className = "my-word-actions";
@@ -2554,6 +2932,9 @@ function renderMyWords() {
 function saveMyWord() {
     const uz = document.getElementById("wordUz").value.trim();
     const ru = document.getElementById("wordRu").value.trim();
+    const en = document.getElementById("wordEn").value.trim();
+    const inLearning = document.getElementById("wordAddLearning").checked;
+    const inTraining = document.getElementById("wordAddTraining").checked;
     const pinyin = document.getElementById("wordPinyin").value.trim();
     const chinese = document.getElementById("wordChinese").value.trim();
 
@@ -2562,12 +2943,19 @@ function saveMyWord() {
         return;
     }
 
+    const oldWord = editingWordId
+        ? userCards.find(function(item) { return item.id === editingWordId; })
+        : null;
+
     const word = {
         id: editingWordId || makeId(),
         uz: uz,
         ru: ru,
+        en: en,
         pinyin: pinyin,
         answer: pinyin.toLowerCase(),
+        inLearning: editingWordId ? !!(oldWord && oldWord.inLearning) : inLearning,
+        inTraining: editingWordId ? !!(oldWord && oldWord.inTraining) : inTraining,
         chinese: chinese
     };
 
@@ -2588,14 +2976,8 @@ function saveMyWord() {
     renderMyWords();
     cancelWordEdit();
 
-    // Добавляем новое слово в текущую колоду, не меняя текущую карточку.
-    if (!editingWordId) {
-        deck.push(word);
-    } else {
-        deck = deck.map(function(item) {
-            return item.id === word.id ? word : item;
-        });
-    }
+    // В тренировку слово попадает только если пользователь сам включил этот раздел.
+    deck = getTrainingCards();
 
     alert(editingWordId ? "Слово изменено!" : "Слово добавлено!");
 }
@@ -2611,8 +2993,11 @@ function editMyWord(id) {
 
     document.getElementById("wordUz").value = word.uz || "";
     document.getElementById("wordRu").value = word.ru || "";
+    document.getElementById("wordEn").value = word.en || "";
     document.getElementById("wordPinyin").value = word.pinyin || "";
     document.getElementById("wordChinese").value = word.chinese || "";
+    document.getElementById("wordAddLearning").checked = !!word.inLearning;
+    document.getElementById("wordAddTraining").checked = !!word.inTraining;
 
     document.getElementById("saveWordButton").innerText = "💾 Сохранить изменения";
     document.getElementById("cancelEditButton").style.display = "inline-block";
@@ -2628,11 +3013,51 @@ function cancelWordEdit() {
 
     document.getElementById("wordUz").value = "";
     document.getElementById("wordRu").value = "";
+    document.getElementById("wordEn").value = "";
     document.getElementById("wordPinyin").value = "";
     document.getElementById("wordChinese").value = "";
+    document.getElementById("wordAddLearning").checked = true;
+    document.getElementById("wordAddTraining").checked = false;
 
     document.getElementById("saveWordButton").innerText = "➕ Добавить слово";
     document.getElementById("cancelEditButton").style.display = "none";
+}
+
+function toggleWordSection(id, section) {
+    const word = userCards.find(function(item) {
+        return item.id === id;
+    });
+
+    if (!word) return;
+
+    if (section === "learning") {
+        word.inLearning = !word.inLearning;
+    }
+
+    if (section === "training") {
+        word.inTraining = !word.inTraining;
+    }
+
+    saveUserCards();
+    rebuildCards();
+
+    // Keep current training deck synchronized.
+    const currentId = deck[current] ? deck[current].id : null;
+    deck = cards.filter(function(item) {
+        return item.id && (
+            item.id.indexOf("builtin-") === 0
+                ? true
+                : !!item.inTraining
+        );
+    });
+
+    if (currentId) {
+        const idx = deck.findIndex(function(item) { return item.id === currentId; });
+        current = idx >= 0 ? idx : Math.min(current, Math.max(0, deck.length - 1));
+    }
+
+    renderMyWords();
+    render();
 }
 
 function deleteMyWord(id) {
@@ -2654,9 +3079,7 @@ function deleteMyWord(id) {
     rebuildCards();
 
     // Убираем удалённое слово из текущей колоды.
-    deck = deck.filter(function(item) {
-        return item.id !== id;
-    });
+    deck = getTrainingCards();
 
     if (current >= deck.length && deck.length > 0) {
         current = deck.length - 1;
@@ -2670,6 +3093,12 @@ function deleteMyWord(id) {
 /* =====================================================
    ГОРЯЧИЕ КЛАВИШИ
 ===================================================== */
+
+document.getElementById("learningInput").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        checkLearningWriting();
+    }
+});
 
 document.addEventListener(
     "keydown",
