@@ -1461,6 +1461,27 @@ button:hover {
 </div>
 </div>
 
+
+<script>
+/* Удаляем старые 12 встроенных слов из сохранённых карточек.
+   Новые слова из учебника остаются. */
+(function removeOldBuiltInWords() {
+    const OLD_BUILTIN = new Set(["你好","可以","辅导","小姐","口语","语法","法语","讨好","了解","友好","雨伞","手表"]);
+    try {
+        const raw = localStorage.getItem("chinese_flashcards_user_words_v1");
+        if (raw) {
+            const cards = JSON.parse(raw);
+            if (Array.isArray(cards)) {
+                const filtered = cards.filter(w => !OLD_BUILTIN.has((w.chinese || "").trim()));
+                localStorage.setItem("chinese_flashcards_user_words_v1", JSON.stringify(filtered));
+            }
+        }
+    } catch (e) {
+        console.warn("Не удалось очистить старые слова:", e);
+    }
+})();
+</script>
+
 <script>
 
 
@@ -1591,6 +1612,588 @@ function loadUserCards() {
 }
 
 let userCards = loadUserCards();
+
+/* =====================================================
+   СЛОВА ИЗ УЧЕБНИКА — автоматическое добавление
+   Добавляются один раз в «Учить слова», но не в «Тренировку».
+===================================================== */
+
+const textbookWordsV1 = [
+    {
+        "uz": "uch",
+        "pinyin": "sān",
+        "answer": "san",
+        "chinese": "三",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "tog‘",
+        "pinyin": "shān",
+        "answer": "shan",
+        "chinese": "山",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "soat",
+        "pinyin": "zhōng",
+        "answer": "zhong",
+        "chinese": "中",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "qo‘y",
+        "pinyin": "yáng",
+        "answer": "yang",
+        "chinese": "羊",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "nol",
+        "pinyin": "líng",
+        "answer": "ling",
+        "chinese": "零",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "taom/sabzavot",
+        "pinyin": "cài",
+        "answer": "cai",
+        "chinese": "菜",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "qo‘l (kaft)",
+        "pinyin": "shǒu",
+        "answer": "shou",
+        "chinese": "手",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "ayiq",
+        "pinyin": "xióng",
+        "answer": "xiong",
+        "chinese": "熊",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "bulut",
+        "pinyin": "yún",
+        "answer": "yun",
+        "chinese": "云",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "yulduz",
+        "pinyin": "xīng",
+        "answer": "xing",
+        "chinese": "星",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "xitoy puli",
+        "pinyin": "yuán",
+        "answer": "yuan",
+        "chinese": "元",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "odam(lar)",
+        "pinyin": "rén",
+        "answer": "ren",
+        "chinese": "人",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "kema",
+        "pinyin": "chuán",
+        "answer": "chuan",
+        "chinese": "船",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "yotoq",
+        "pinyin": "chuáng",
+        "answer": "chuang",
+        "chinese": "床",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "yemoq",
+        "pinyin": "chī",
+        "answer": "chi",
+        "chinese": "吃",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "issiq",
+        "pinyin": "rè",
+        "answer": "re",
+        "chinese": "热",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "muzlatgich",
+        "pinyin": "bīngxiāng",
+        "answer": "bingxiang",
+        "chinese": "冰箱",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "tuxum",
+        "pinyin": "jīdàn",
+        "answer": "jidan",
+        "chinese": "鸡蛋",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "haydovchi",
+        "pinyin": "sījī",
+        "answer": "siji",
+        "chinese": "司机",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "futbol",
+        "pinyin": "zúqiú",
+        "answer": "zuqiu",
+        "chinese": "足球",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "aeroport",
+        "pinyin": "jīchǎng",
+        "answer": "jichang",
+        "chinese": "机场",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "toqqa chiqmoq",
+        "pinyin": "páshān",
+        "answer": "pashan",
+        "chinese": "爬山",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "panda",
+        "pinyin": "xióngmāo",
+        "answer": "xiongmao",
+        "chinese": "熊猫",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "dam olmoq",
+        "pinyin": "xiūxi",
+        "answer": "xiuxi",
+        "chinese": "休息",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "uxlamoq",
+        "pinyin": "shuìjiào",
+        "answer": "shuijiao",
+        "chinese": "睡觉",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "piva",
+        "pinyin": "píjiǔ",
+        "answer": "pijiu",
+        "chinese": "啤酒",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "qimmat",
+        "pinyin": "ángguì",
+        "answer": "anggui",
+        "chinese": "昂贵",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "muhokama",
+        "pinyin": "tǎolùn",
+        "answer": "taolun",
+        "chinese": "讨论",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "uyalish",
+        "pinyin": "cánkuì",
+        "answer": "cankui",
+        "chinese": "惭愧",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "futbol",
+        "pinyin": "zúqiú",
+        "answer": "zuqiu",
+        "chinese": "足球",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "mevalar",
+        "pinyin": "shuǐguǒ",
+        "answer": "shuiguo",
+        "chinese": "水果",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "yelkanli kema",
+        "pinyin": "lúnchuán",
+        "answer": "lunchuan",
+        "chinese": "轮船",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "habar qoldirmoq",
+        "pinyin": "liúyán",
+        "answer": "liuyan",
+        "chinese": "留言",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "London",
+        "pinyin": "Lúndūn",
+        "answer": "lundun",
+        "chinese": "伦敦",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "zavqlanmoq",
+        "pinyin": "táozuì",
+        "answer": "taozui",
+        "chinese": "陶醉",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "sut",
+        "pinyin": "niúnǎi",
+        "answer": "niunai",
+        "chinese": "牛奶",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "tadbir/uchrashuv",
+        "pinyin": "kāihuì",
+        "answer": "kaihui",
+        "chinese": "开会",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "nam (lik)",
+        "pinyin": "shīrùn",
+        "answer": "shirun",
+        "chinese": "湿润",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "omadli/silliq",
+        "pinyin": "shùnlì",
+        "answer": "shunli",
+        "chinese": "顺利",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "maktab",
+        "pinyin": "xuéxiào",
+        "answer": "xuexiao",
+        "chinese": "学校",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "suzish",
+        "pinyin": "yóuyǒng",
+        "answer": "youyong",
+        "chinese": "游泳",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "vaqt",
+        "pinyin": "shíjiān",
+        "answer": "shijian",
+        "chinese": "时间",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "gazeta",
+        "pinyin": "bàozhǐ",
+        "answer": "baozhi",
+        "chinese": "报纸",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "yordam bermoq",
+        "pinyin": "bāngmáng",
+        "answer": "bangmang",
+        "chinese": "帮忙",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "tana",
+        "pinyin": "shēntǐ",
+        "answer": "shenti",
+        "chinese": "身体",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "mazali",
+        "pinyin": "hǎochī",
+        "answer": "haochi",
+        "chinese": "好吃",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "basketbol",
+        "pinyin": "lánqiú",
+        "answer": "lanqiu",
+        "chinese": "篮球",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "nihoyat",
+        "pinyin": "zhōngyú",
+        "answer": "zhongyu",
+        "chinese": "终于",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "imtihon",
+        "pinyin": "kǎoshì",
+        "answer": "kaoshi",
+        "chinese": "考试",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "rahmat",
+        "pinyin": "xièxie",
+        "answer": "xiexie",
+        "chinese": "谢谢",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "qiz bola (farzand)",
+        "pinyin": "nǚ'ér",
+        "answer": "nver",
+        "chinese": "女儿",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "ofis",
+        "pinyin": "gōngsī",
+        "answer": "gongsi",
+        "chinese": "公司",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "davlat",
+        "pinyin": "guójiā",
+        "answer": "guojia",
+        "chinese": "国家",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    },
+    {
+        "uz": "muloyim, muloyim",
+        "pinyin": "kèqì",
+        "answer": "keqi",
+        "chinese": "客气",
+        "ru": "",
+        "en": "",
+        "inLearning": true,
+        "inTraining": false
+    }
+];
+
+(function seedTextbookWords() {
+    const existingChinese = new Set(
+        userCards
+            .map(function(word) { return (word.chinese || "").trim(); })
+            .filter(Boolean)
+    );
+
+    let added = 0;
+
+    textbookWordsV1.forEach(function(word) {
+        if (existingChinese.has(word.chinese)) return;
+
+        userCards.push({
+            id: makeId(),
+            uz: word.uz,
+            ru: word.ru,
+            en: word.en,
+            pinyin: word.pinyin,
+            answer: word.answer,
+            chinese: word.chinese,
+            inLearning: true,
+            inTraining: false
+        });
+
+        existingChinese.add(word.chinese);
+        added++;
+    });
+
+    if (added > 0) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(userCards));
+    }
+})();
+
 
 let cards = [];
 
