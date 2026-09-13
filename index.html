@@ -1462,6 +1462,76 @@ button:hover {
 </div>
 
 
+
+
+<script>
+(function finalRemoveOldWords() {
+  const OLD_WORDS = new Set(["你好","可以","辅导","小姐","口语","语法","法语","讨好","了解","友好","雨伞","手表"]);
+
+  function isOld(w) {
+    if (!w) return false;
+    const fields = [
+      w.chinese, w.word, w.zh, w.front, w.answer,
+      w.pinyin, w.ru, w.uz
+    ];
+    return fields.some(v => OLD_WORDS.has(String(v || "").trim()));
+  }
+
+  // Clean all arrays exposed on window.
+  Object.keys(window).forEach(k => {
+    try {
+      const v = window[k];
+      if (Array.isArray(v) && v.length && v.some(x => x && typeof x === "object" && isOld(x))) {
+        window[k] = v.filter(x => !isOld(x));
+      }
+    } catch(e) {}
+  });
+
+  // Clean persisted cards under every localStorage key.
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    try {
+      const raw = localStorage.getItem(key);
+      const data = JSON.parse(raw);
+      if (Array.isArray(data)) {
+        const cleaned = data.filter(x => !isOld(x));
+        if (cleaned.length !== data.length) {
+          localStorage.setItem(key, JSON.stringify(cleaned));
+        }
+      }
+    } catch(e) {}
+  }
+})();
+</script>
+
+<script>
+(function removeOldWordsEverywhere() {
+  const OLD = new Set(["你好","可以","辅导","小姐","口语","语法","法语","讨好","了解","友好","雨伞","手表"]);
+
+  function cleanStorage() {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key) continue;
+      try {
+        const value = localStorage.getItem(key);
+        const data = JSON.parse(value);
+        if (Array.isArray(data)) {
+          const filtered = data.filter(w => {
+            if (!w || typeof w !== "object") return true;
+            return !OLD.has(String(w.chinese || "").trim());
+          });
+          if (filtered.length !== data.length) {
+            localStorage.setItem(key, JSON.stringify(filtered));
+          }
+        }
+      } catch (e) {}
+    }
+  }
+
+  cleanStorage();
+})();
+</script>
+
 <script>
 /* Удаляем старые 12 встроенных слов из сохранённых карточек.
    Новые слова из учебника остаются. */
@@ -1491,103 +1561,7 @@ button:hover {
 
 const builtInCards = [
 
-    {
-        uz: "salom",
-        pinyin: "nǐ hǎo",
-        answer: "ni hao",
-        chinese: "你好",
-        ru: "Привет"
-    },
-
-    {
-        uz: "mumkin",
-        pinyin: "kěyǐ",
-        answer: "keyi",
-        chinese: "可以",
-        ru: "Можно, мочь"
-    },
-
-    {
-        uz: "maslahat",
-        pinyin: "fǔdǎo",
-        answer: "fudao",
-        chinese: "辅导",
-        ru: "Помогать в учёбе"
-    },
-
-    {
-        uz: "xonim",
-        pinyin: "xiǎojiě",
-        answer: "xiaojie",
-        chinese: "小姐",
-        ru: "Девушка, мисс"
-    },
-
-    {
-        uz: "og‘zaki",
-        pinyin: "kǒuyǔ",
-        answer: "kouyu",
-        chinese: "口语",
-        ru: "Разговорный язык"
-    },
-
-    {
-        uz: "grammatika",
-        pinyin: "yǔfǎ",
-        answer: "yufa",
-        chinese: "语法",
-        ru: "Грамматика"
-    },
-
-    {
-        uz: "Fransuz tili",
-        pinyin: "Fǎyǔ",
-        answer: "fayu",
-        chinese: "法语",
-        ru: "Французский язык"
-    },
-
-    {
-        uz: "iltimos qilish",
-        pinyin: "tǎo hǎo",
-        answer: "tao hao",
-        chinese: "讨好",
-        ru: "Угождать"
-    },
-
-    {
-        uz: "bilmoq",
-        pinyin: "liǎojiě",
-        answer: "liaojie",
-        chinese: "了解",
-        ru: "Понимать"
-    },
-
-    {
-        uz: "do‘stona",
-        pinyin: "yǒuhǎo",
-        answer: "youhao",
-        chinese: "友好",
-        ru: "Дружелюбный"
-    },
-
-    {
-        uz: "soyabon",
-        pinyin: "yǔsǎn",
-        answer: "yusan",
-        chinese: "雨伞",
-        ru: "Зонт"
-    },
-
-    {
-        uz: "qo‘l soat",
-        pinyin: "shǒubiǎo",
-        answer: "shoubiao",
-        chinese: "手表",
-        ru: "Наручные часы"
-    }
-
-];
+    ];
 
 const STORAGE_KEY = "chinese_flashcards_user_words_v1";
 
