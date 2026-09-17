@@ -1924,6 +1924,15 @@ const textbookWordsV1 = [
    ПЕРЕМЕННЫЕ
 ===================================================== */
 
+// Все слова из «Мои слова» являются общей базой для разделов.
+// builtInCards оставлен пустым, поэтому cards всегда синхронизирован с userCards.
+let cards = userCards.slice();
+
+function rebuildCards() {
+    cards = userCards.slice();
+    return cards;
+}
+
 function getTrainingCards() {
     return cards.filter(function(word) {
         return word.id && word.id.indexOf("builtin-") === 0
