@@ -1886,7 +1886,7 @@ const textbookWordsV1 = [
 ];
 
 (function seedTextbookWords() {
-    const RESET_VERSION = "requested_words_only_v4";
+    const RESET_VERSION = "requested_words_only_v5";
     if (localStorage.getItem("chinese_flashcards_reset_version") !== RESET_VERSION) {
         localStorage.removeItem("chinese_flashcards_user_words_v1");
         localStorage.removeItem("chinese_flashcards_user_words_v2");
@@ -1911,7 +1911,19 @@ const textbookWordsV1 = [
         existingChinese.add(word.chinese);
     });
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(userCards));
+    
+    // Гарантируем: все слова этого набора есть во всех трёх разделах.
+    const requestedChinese = new Set(textbookWordsV1.map(function(w) {
+        return w.chinese;
+    }));
+    userCards.forEach(function(w) {
+        if (requestedChinese.has((w.chinese || "").trim())) {
+            w.inLearning = true;
+            w.inTraining = true;
+        }
+    });
+
+localStorage.setItem(STORAGE_KEY, JSON.stringify(userCards));
 })();
 /* =====================================================
    ПЕРЕМЕННЫЕ
