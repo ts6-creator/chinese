@@ -1912,18 +1912,13 @@ const textbookWordsV1 = [
     });
 
     
-    // Гарантируем: все слова этого набора есть во всех трёх разделах.
-    const requestedChinese = new Set(textbookWordsV1.map(function(w) {
-        return w.chinese;
-    }));
+    // Все слова из раздела «Мои слова» доступны и в «Учить слова», и в «Тренировка».
     userCards.forEach(function(w) {
-        if (requestedChinese.has((w.chinese || "").trim())) {
-            w.inLearning = true;
-            w.inTraining = true;
-        }
+        w.inLearning = true;
+        w.inTraining = true;
     });
 
-localStorage.setItem(STORAGE_KEY, JSON.stringify(userCards));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(userCards));
 })();
 /* =====================================================
    ПЕРЕМЕННЫЕ
