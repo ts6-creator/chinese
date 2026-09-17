@@ -29,7 +29,7 @@ body {
 
     text-align: center;
 
-    background: #f5f5f5;
+    background: #f3f4f6;
 
     color: #222;
 
@@ -743,30 +743,49 @@ button:hover {
 .screen { width: 100%; }
 
 .home-screen {
-    max-width: 850px;
-    margin: 70px auto 0;
+    max-width: 560px;
+    margin: 80px auto 0;
+    padding: 42px 28px;
     text-align: center;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.06);
+    box-sizing: border-box;
 }
 
 .home-screen h1 {
-    font-size: 34px;
-    margin-bottom: 30px;
+    font-size: 32px;
+    margin: 0 0 30px;
 }
 
 .home-buttons {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     gap: 12px;
 }
 
 .home-button {
-    width: auto;
-    min-width: 170px;
-    padding: 13px 20px;
-    font-size: 17px;
-    background: #333;
-    color: white;
-    border-radius: 9px;
+    width: 100%;
+    max-width: 460px;
+    min-width: 0;
+    padding: 16px 22px;
+    font-size: 18px;
+    font-weight: 600;
+    background: #ffffff;
+    color: #222;
+    border: 1px solid #d9dde3;
+    border-radius: 12px;
+    box-shadow: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.home-button:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+    border-color: #b8bec7;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.07);
 }
 
 .top-actions {
@@ -799,7 +818,7 @@ button:hover {
 @media (max-width: 600px) {
     .home-screen {
         margin-top: 35px;
-        padding: 0 10px;
+        padding: 30px 16px;
     }
 
     .home-screen h1 {
@@ -811,8 +830,9 @@ button:hover {
     }
 
     .home-button {
-        min-width: 145px;
-        padding: 12px 14px;
+        width: 100%;
+        max-width: none;
+        padding: 14px 16px;
         font-size: 16px;
     }
 
@@ -1886,12 +1906,10 @@ const textbookWordsV1 = [
 ];
 
 (function seedTextbookWords() {
-    const RESET_VERSION = "requested_words_only_v6_all_sections";
+    const RESET_VERSION = "requested_words_only_v7_github_safe";
+    // Безопасная миграция для GitHub Pages: не удаляем пользовательские слова
+    // при обновлении index.html. Синхронизируем только встроенные 31 слово.
     if (localStorage.getItem("chinese_flashcards_reset_version") !== RESET_VERSION) {
-        localStorage.removeItem("chinese_flashcards_user_words_v1");
-        localStorage.removeItem("chinese_flashcards_user_words_v2");
-        localStorage.removeItem(STORAGE_KEY);
-        userCards = [];
         localStorage.setItem("chinese_flashcards_reset_version", RESET_VERSION);
     }
 
@@ -2269,6 +2287,11 @@ function cancelAnswer() {
 /* =====================================================
    ПОДТВЕРЖДЕНИЕ ОБЫЧНОГО
 ===================================================== */
+
+function wordKey(word) {
+    if (!word) return "";
+    return String(word.id || word.chinese || word.pinyin || word.uz || "");
+}
 
 function confirmNormalAnswer() {
 
@@ -3271,8 +3294,8 @@ function saveMyWord() {
         en: en,
         pinyin: pinyin,
         answer: pinyin.toLowerCase(),
-        inLearning: editingWordId ? !!(oldWord && oldWord.inLearning) : inLearning,
-        inTraining: editingWordId ? !!(oldWord && oldWord.inTraining) : inTraining,
+        inLearning: inLearning,
+        inTraining: inTraining,
         chinese: chinese
     };
 
