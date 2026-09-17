@@ -2928,8 +2928,9 @@ function restartConfirm() {
 
 function restartDeck() {
 
+    // Тренировка должна использовать только слова, включённые в «Тренировка».
     deck =
-        [...cards];
+        getTrainingCards();
 
 
     current = 0;
