@@ -29,7 +29,7 @@ body {
 
     text-align: center;
 
-    background: #f3f4f6;
+    background: #f5f5f5;
 
     color: #222;
 
@@ -743,49 +743,30 @@ button:hover {
 .screen { width: 100%; }
 
 .home-screen {
-    max-width: 560px;
-    margin: 80px auto 0;
-    padding: 42px 28px;
+    max-width: 850px;
+    margin: 70px auto 0;
     text-align: center;
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid #e5e7eb;
-    border-radius: 20px;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.06);
-    box-sizing: border-box;
 }
 
 .home-screen h1 {
-    font-size: 32px;
-    margin: 0 0 30px;
+    font-size: 34px;
+    margin-bottom: 30px;
 }
 
 .home-buttons {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
     gap: 12px;
 }
 
 .home-button {
-    width: 100%;
-    max-width: 460px;
-    min-width: 0;
-    padding: 16px 22px;
-    font-size: 18px;
-    font-weight: 600;
-    background: #ffffff;
-    color: #222;
-    border: 1px solid #d9dde3;
-    border-radius: 12px;
-    box-shadow: none;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.home-button:hover {
-    opacity: 1;
-    transform: translateY(-1px);
-    border-color: #b8bec7;
-    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.07);
+    width: auto;
+    min-width: 170px;
+    padding: 13px 20px;
+    font-size: 17px;
+    background: #333;
+    color: white;
+    border-radius: 9px;
 }
 
 .top-actions {
@@ -818,7 +799,7 @@ button:hover {
 @media (max-width: 600px) {
     .home-screen {
         margin-top: 35px;
-        padding: 30px 16px;
+        padding: 0 10px;
     }
 
     .home-screen h1 {
@@ -830,9 +811,8 @@ button:hover {
     }
 
     .home-button {
-        width: 100%;
-        max-width: none;
-        padding: 14px 16px;
+        min-width: 145px;
+        padding: 12px 14px;
         font-size: 16px;
     }
 
@@ -1485,74 +1465,6 @@ button:hover {
 
 
 <script>
-(function finalRemoveOldWords() {
-  const OLD_WORDS = new Set(["你好","可以","辅导","小姐","口语","语法","法语","讨好","了解","友好","雨伞","手表"]);
-
-  function isOld(w) {
-    if (!w) return false;
-    const fields = [
-      w.chinese, w.word, w.zh, w.front, w.answer,
-      w.pinyin, w.ru, w.uz
-    ];
-    return fields.some(v => OLD_WORDS.has(String(v || "").trim()));
-  }
-
-  // Clean all arrays exposed on window.
-  Object.keys(window).forEach(k => {
-    try {
-      const v = window[k];
-      if (Array.isArray(v) && v.length && v.some(x => x && typeof x === "object" && isOld(x))) {
-        window[k] = v.filter(x => !isOld(x));
-      }
-    } catch(e) {}
-  });
-
-  // Clean persisted cards under every localStorage key.
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    try {
-      const raw = localStorage.getItem(key);
-      const data = JSON.parse(raw);
-      if (Array.isArray(data)) {
-        const cleaned = data.filter(x => !isOld(x));
-        if (cleaned.length !== data.length) {
-          localStorage.setItem(key, JSON.stringify(cleaned));
-        }
-      }
-    } catch(e) {}
-  }
-})();
-</script>
-
-<script>
-(function removeOldWordsEverywhere() {
-  const OLD = new Set(["你好","可以","辅导","小姐","口语","语法","法语","讨好","了解","友好","雨伞","手表"]);
-
-  function cleanStorage() {
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (!key) continue;
-      try {
-        const value = localStorage.getItem(key);
-        const data = JSON.parse(value);
-        if (Array.isArray(data)) {
-          const filtered = data.filter(w => {
-            if (!w || typeof w !== "object") return true;
-            return !OLD.has(String(w.chinese || "").trim());
-          });
-          if (filtered.length !== data.length) {
-            localStorage.setItem(key, JSON.stringify(filtered));
-          }
-        }
-      } catch (e) {}
-    }
-  }
-
-  cleanStorage();
-})();
-</script>
-
-<script>
 
 
 /* =====================================================
@@ -1594,362 +1506,290 @@ let userCards = loadUserCards();
 
 const textbookWordsV1 = [
     {
-        "uz": "uy",
+        "uz": "Xitoy",
         "ru": "",
         "en": "",
-        "pinyin": "fangzi",
-        "answer": "fangzi",
-        "chinese": "房子",
+        "pinyin": "Zhōngguó",
+        "answer": "zhongguo",
+        "chinese": "中国",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "stul",
+        "uz": "Amerika",
         "ru": "",
         "en": "",
-        "pinyin": "yizi",
-        "answer": "yizi",
-        "chinese": "椅子",
+        "pinyin": "Měiguó",
+        "answer": "meiguo",
+        "chinese": "美国",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "kabinet",
+        "uz": "xitoylik / xitoyliklar",
         "ru": "",
         "en": "",
-        "pinyin": "guizi",
-        "answer": "guizi",
-        "chinese": "柜子",
+        "pinyin": "Zhōngguó rén",
+        "answer": "zhongguoren",
+        "chinese": "中国人",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "ular",
+        "uz": "o‘qituvchi",
         "ru": "",
         "en": "",
-        "pinyin": "tamen",
-        "answer": "tamen",
-        "chinese": "他们",
+        "pinyin": "lǎoshī",
+        "answer": "laoshi",
+        "chinese": "老师",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "odamlar",
+        "uz": "o‘quvchi / talaba",
         "ru": "",
         "en": "",
-        "pinyin": "renmen",
-        "answer": "renmen",
-        "chinese": "人们",
+        "pinyin": "xuéshēng",
+        "answer": "xuesheng",
+        "chinese": "学生",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "biz",
+        "uz": "odam",
         "ru": "",
         "en": "",
-        "pinyin": "women",
-        "answer": "women",
-        "chinese": "我们",
+        "pinyin": "rén",
+        "answer": "ren",
+        "chinese": "人",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "uka",
+        "uz": "kim",
         "ru": "",
         "en": "",
-        "pinyin": "didi",
-        "answer": "didi",
-        "chinese": "弟弟",
+        "pinyin": "shéi",
+        "answer": "shei",
+        "chinese": "谁",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "kiyim",
+        "uz": "davlat",
         "ru": "",
         "en": "",
-        "pinyin": "yifu",
-        "answer": "yifu",
-        "chinese": "衣服",
+        "pinyin": "guójiā",
+        "answer": "guojia",
+        "chinese": "国家",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "ugil farzand",
+        "uz": "kursdosh / sinfdosh",
         "ru": "",
         "en": "",
-        "pinyin": "erzi",
-        "answer": "erzi",
-        "chinese": "儿子",
+        "pinyin": "tóngxué",
+        "answer": "tongxue",
+        "chinese": "同学",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "yaxshi kormoq",
+        "uz": "bilim",
         "ru": "",
         "en": "",
-        "pinyin": "xihuan",
-        "answer": "xihuan",
-        "chinese": "喜欢",
+        "pinyin": "zhīshi",
+        "answer": "zhishi",
+        "chinese": "知识",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "tanishmoq",
+        "uz": "tanimoq",
         "ru": "",
         "en": "",
-        "pinyin": "renshi",
+        "pinyin": "rènshi",
         "answer": "renshi",
         "chinese": "认识",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "janob",
+        "uz": "yonish",
         "ru": "",
         "en": "",
-        "pinyin": "xiansheng",
-        "answer": "xiansheng",
-        "chinese": "先生",
+        "pinyin": "ránshāo",
+        "answer": "ranshao",
+        "chinese": "燃烧",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "dost",
+        "uz": "Operatsiya",
         "ru": "",
         "en": "",
-        "pinyin": "pengyou",
-        "answer": "pengyou",
-        "chinese": "朋友",
+        "pinyin": "shǒushù",
+        "answer": "shoushu",
+        "chinese": "手术",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "kechqurun",
+        "uz": "oshxona",
         "ru": "",
         "en": "",
-        "pinyin": "wanshang",
-        "answer": "wanshang",
-        "chinese": "晚上",
+        "pinyin": "chúshī",
+        "answer": "chushi",
+        "chinese": "厨师",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "chiroyli",
+        "uz": "muntazam ovqatlanish",
         "ru": "",
         "en": "",
-        "pinyin": "pioling",
-        "answer": "pioling",
-        "chinese": "漂亮",
+        "pinyin": "chángshí",
+        "answer": "changshi",
+        "chinese": "常食",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "dam olmoq",
+        "uz": "tug‘ilgan kun",
         "ru": "",
         "en": "",
-        "pinyin": "xiuxi",
-        "answer": "xiuxi",
-        "chinese": "休息",
+        "pinyin": "shēngrì",
+        "answer": "shengri",
+        "chinese": "生日",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "faol",
+        "uz": "haqiqat",
         "ru": "",
         "en": "",
-        "pinyin": "jiji",
-        "answer": "jiji",
-        "chinese": "积极",
+        "pinyin": "shìshí",
+        "answer": "shishi",
+        "chinese": "事实",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "texnika",
+        "uz": "mashinaga chiqish",
         "ru": "",
         "en": "",
-        "pinyin": "jiqi",
-        "answer": "jiqi",
-        "chinese": "机器",
+        "pinyin": "shàngchē",
+        "answer": "shangche",
+        "chinese": "上车",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "tuman",
+        "uz": "supermen",
         "ru": "",
         "en": "",
-        "pinyin": "xiaoqu",
-        "answer": "xiaoqu",
-        "chinese": "小区",
+        "pinyin": "chāorén",
+        "answer": "chaoren",
+        "chinese": "超人",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "hafta",
+        "uz": "savdo markazi",
         "ru": "",
         "en": "",
-        "pinyin": "xingqi",
-        "answer": "xingqi",
-        "chinese": "星期",
+        "pinyin": "shāngchǎng",
+        "answer": "shangchang",
+        "chinese": "商场",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "banan",
+        "uz": "safarga chiqish",
         "ru": "",
         "en": "",
-        "pinyin": "xiangjiao",
-        "answer": "xiangjiao",
-        "chinese": "香蕉",
+        "pinyin": "chūchāi",
+        "answer": "chuchai",
+        "chinese": "出差",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "qiziqish",
+        "uz": "supermarket",
         "ru": "",
         "en": "",
-        "pinyin": "xingqu",
-        "answer": "xingqu",
-        "chinese": "兴趣",
+        "pinyin": "chāoshì",
+        "answer": "chaoshi",
+        "chinese": "超市",
         "inLearning": true,
         "inTraining": true
     },
     {
-        "uz": "davom ettirish",
+        "uz": "Buyuk Xitoy devori",
         "ru": "",
         "en": "",
-        "pinyin": "jixu",
-        "answer": "jixu",
-        "chinese": "继续",
-        "inLearning": true,
-        "inTraining": true
-    },
-    {
-        "uz": "yuvinmoq",
-        "ru": "",
-        "en": "",
-        "pinyin": "xi zao",
-        "answer": "xi zao",
-        "chinese": "洗澡",
-        "inLearning": true,
-        "inTraining": true
-    },
-    {
-        "uz": "tozalamoq",
-        "ru": "",
-        "en": "",
-        "pinyin": "dasao",
-        "answer": "dasao",
-        "chinese": "打扫",
-        "inLearning": true,
-        "inTraining": true
-    },
-    {
-        "uz": "3 martta",
-        "ru": "",
-        "en": "",
-        "pinyin": "san ci",
-        "answer": "san ci",
-        "chinese": "三次",
-        "inLearning": true,
-        "inTraining": true
-    },
-    {
-        "uz": "ozim",
-        "ru": "",
-        "en": "",
-        "pinyin": "ziji",
-        "answer": "ziji",
-        "chinese": "自己",
-        "inLearning": true,
-        "inTraining": true
-    },
-    {
-        "uz": "kecha",
-        "ru": "",
-        "en": "",
-        "pinyin": "zuotian",
-        "answer": "zuotian",
-        "chinese": "昨天",
-        "inLearning": true,
-        "inTraining": true
-    },
-    {
-        "uz": "ertalab",
-        "ru": "",
-        "en": "",
-        "pinyin": "zaoshang",
-        "answer": "zaoshang",
-        "chinese": "早上",
-        "inLearning": true,
-        "inTraining": true
-    },
-    {
-        "uz": "maydon",
-        "ru": "",
-        "en": "",
-        "pinyin": "caochang",
-        "answer": "caochang",
-        "chinese": "操场",
-        "inLearning": true,
-        "inTraining": true
-    },
-    {
-        "uz": "ieroglif",
-        "ru": "",
-        "en": "",
-        "pinyin": "hanzi",
-        "answer": "hanzi",
-        "chinese": "汉字",
+        "pinyin": "Chángchéng",
+        "answer": "changcheng",
+        "chinese": "长城",
         "inLearning": true,
         "inTraining": true
     }
 ];
 
 (function seedTextbookWords() {
-    const RESET_VERSION = "requested_words_only_v7_github_safe";
-    // Безопасная миграция для GitHub Pages: не удаляем пользовательские слова
-    // при обновлении index.html. Синхронизируем только встроенные 31 слово.
-    if (localStorage.getItem("chinese_flashcards_reset_version") !== RESET_VERSION) {
-        localStorage.setItem("chinese_flashcards_reset_version", RESET_VERSION);
-    }
+    const RESET_VERSION = "old_words_mywords_new_both_v6";
 
-    const existingChinese = new Set(userCards.map(function(w) {
-        return (w.chinese || "").trim();
+    const OLD_ONLY_MY_WORDS = new Set(["三次", "人们", "他们", "休息", "儿子", "先生", "兴趣", "喜欢", "小区", "弟弟", "我们", "房子", "打扫", "操场", "早上", "星期", "昨天", "晚上", "朋友", "机器", "柜子", "椅子", "汉字", "洗澡", "漂亮", "积极", "继续", "自己", "衣服", "认识", "香蕉"]);
+    const NEW_BOTH = new Set(textbookWordsV1.map(function(w) { return w.chinese; }));
+
+    // Старые слова НЕ удаляем: оставляем их в «Мои слова»,
+    // но убираем из «Учить слова» и «Тренировка».
+    userCards.forEach(function(word) {
+        const zh = (word.chinese || "").trim();
+        if (OLD_ONLY_MY_WORDS.has(zh) && !NEW_BOTH.has(zh)) {
+            word.inLearning = false;
+            word.inTraining = false;
+        }
+    });
+
+    // Новые слова добавляем в «Мои слова» и сразу в оба раздела.
+    const existingChinese = new Set(userCards.map(function(word) {
+        return (word.chinese || "").trim();
     }).filter(Boolean));
 
     textbookWordsV1.forEach(function(word) {
-        if (existingChinese.has(word.chinese)) return;
+        const existing = userCards.find(function(w) {
+            return (w.chinese || "").trim() === word.chinese;
+        });
+
+        if (existing) {
+            existing.inLearning = true;
+            existing.inTraining = true;
+            return;
+        }
+
         userCards.push({
             id: makeId(),
-            uz: word.uz, ru: word.ru, en: word.en,
-            pinyin: word.pinyin, answer: word.answer,
+            uz: word.uz,
+            ru: word.ru,
+            en: word.en,
+            pinyin: word.pinyin,
+            answer: word.answer,
             chinese: word.chinese,
-            inLearning: true, inTraining: true
+            inLearning: true,
+            inTraining: true
         });
-        existingChinese.add(word.chinese);
-    });
 
-    
-    // Все слова из раздела «Мои слова» доступны и в «Учить слова», и в «Тренировка».
-    userCards.forEach(function(w) {
-        w.inLearning = true;
-        w.inTraining = true;
+        existingChinese.add(word.chinese);
     });
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(userCards));
 })();
+
 /* =====================================================
    ПЕРЕМЕННЫЕ
 ===================================================== */
-
-// Все слова из «Мои слова» являются общей базой для разделов.
-// builtInCards оставлен пустым, поэтому cards всегда синхронизирован с userCards.
-let cards = userCards.slice();
-
-function rebuildCards() {
-    cards = userCards.slice();
-    return cards;
-}
 
 function getTrainingCards() {
     return cards.filter(function(word) {
@@ -2287,11 +2127,6 @@ function cancelAnswer() {
 /* =====================================================
    ПОДТВЕРЖДЕНИЕ ОБЫЧНОГО
 ===================================================== */
-
-function wordKey(word) {
-    if (!word) return "";
-    return String(word.id || word.chinese || word.pinyin || word.uz || "");
-}
 
 function confirmNormalAnswer() {
 
@@ -2951,9 +2786,8 @@ function restartConfirm() {
 
 function restartDeck() {
 
-    // Тренировка должна использовать только слова, включённые в «Тренировка».
     deck =
-        getTrainingCards();
+        [...cards];
 
 
     current = 0;
@@ -3294,8 +3128,8 @@ function saveMyWord() {
         en: en,
         pinyin: pinyin,
         answer: pinyin.toLowerCase(),
-        inLearning: inLearning,
-        inTraining: inTraining,
+        inLearning: editingWordId ? !!(oldWord && oldWord.inLearning) : inLearning,
+        inTraining: editingWordId ? !!(oldWord && oldWord.inTraining) : inTraining,
         chinese: chinese
     };
 
